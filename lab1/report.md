@@ -69,7 +69,7 @@ First, the Lua interpreter was enabled in _Interpreter languages and scripting_ 
 os.execute("wget http://192.168.145.97:8000/update.tar.gz -qO- | gzip -d | tar -x")
 ```
 
-When booting the RPi we could find the unpacked archive under `/` showing the correctness of the setup.
+Finally a simple http server was started on the host side with a `update.tar.gz`. When booting the RPi we could find the unpacked archive under `/` showing the correctness of the setup.
 
 ## 7.
 
@@ -90,7 +90,7 @@ Buildroot configuration:
 
 ...and more, all can be found in the attached `.config`.
 
-# Attachment archive
+# Attached archive
 
 ```
 .

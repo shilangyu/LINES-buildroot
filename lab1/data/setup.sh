@@ -9,7 +9,7 @@ cd buildroot-2022.02
 cp ../.config .
 
 # change vfat partition size
-# sed board/raspberrypi4-64/genimage-raspberrypi4-64.cfg
+sed -i.bak 's/32M/256M/g' board/raspberrypi4-64/genimage-raspberrypi4-64.cfg
 
 # create build
-# make
+make
