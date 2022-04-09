@@ -1,2 +1,4 @@
 report.pdf
 buildroot-2022*
+ccache-br/
+*.o
