@@ -3,7 +3,7 @@ title: Linux for Embedded Systems -- Laboratory ex. 1
 geometry: margin=2.5cm
 author:
   - Marcin Wojnarowski, 303880
-date: 26-03-2022
+date: 03-04-2022
 ---
 
 # Description of the assignment
@@ -49,7 +49,7 @@ In `menuconfig` the hostname was changed to `marcin_wojnarowski` using the `BR_T
 
 ## 5.
 
-The ntp package was enabled (`BR2_PACKAGE_NTP`) and its daemon (`BR2_PACKAGE_NTP_NTPD`).
+The ntp package was enabled (`BR2_PACKAGE_NTP`) and its daemon (`BR2_PACKAGE_NTP_NTPD`). Running `date` showed that the correct date was set (in UTC).
 
 ## 6.
 
@@ -73,7 +73,7 @@ Finally a simple http server was started on the host side with a `update.tar.gz`
 
 ## 7.
 
-Using `BR2_ROOTFS_USERS_TABLES`, it was set to a path `../mkusers.txt`. A file was created at that path and an example user was created named `wojnarowskim`. Then for the root user, `BR2_TARGET_GENERIC_ROOT_PASSWD` was set to some password, in our case it was set to `root`.
+Using `BR2_ROOTFS_USERS_TABLES`, it was set to a path `../mkusers.txt`. A file was created at that path and an example user was created named `wojnarowskim`. Then for the root user, `BR2_TARGET_GENERIC_ROOT_PASSWD` was set to some password, in our case it was set to `root`. Booting in we could login with the `wojnarowskim` account using the appropriate password and then we could switch to `root` with `su root` and enter the newly set password.
 
 # Description of the modifications of BR and kernel configurations
 
