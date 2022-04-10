@@ -1,0 +1,1 @@
+source "$BR2_EXTERNAL_RPI_MINI_PATH/package/dioed/Config.in"

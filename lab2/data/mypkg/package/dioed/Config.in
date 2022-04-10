@@ -1,0 +1,8 @@
+config BR2_PACKAGE_DIOED
+	bool "dioed"
+	depends on BR2_PACKAGE_LIBGPIOD
+	help
+	  Programmable diodes using small declarative language with loops 
+
+comment "dioed depends on libgpiod library"
+	depends on !BR2_PACKAGE_LIBGPIOD

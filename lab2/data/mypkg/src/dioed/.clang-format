@@ -1,0 +1,6 @@
+AlignConsecutiveAssignments: true
+AlignTrailingComments: true
+BreakBeforeBraces: Attach
+AllowShortIfStatementsOnASingleLine: true
+IndentWidth: 4
+ColumnLimit: 0
