@@ -20,7 +20,7 @@ void flush_stdin(void) {
 }
 
 void greet(char **argv) {
-    printf("Welcome to %s, a small programmable language for flashing your diodes\n"
+    printf("Welcome to %s, a small programmable language for flashing your LEDs\n"
            "\n"
            "Buttons on the Raspi trigger the following actions:\n"
            "\tTODO) Start programming\n"
@@ -28,14 +28,14 @@ void greet(char **argv) {
            "\tTODO) Change frame duration, cycles between the following values: 1s [default], 500ms, 100ms\n"
            "\n"
            "The programming language consists of single-char instructions, available instructions:\n"
-           "\t# - a single digit, index of the diode to turn on (1-indexed), possible values: [1-9], eg. `1`, `2`, `9`\n"
+           "\t# - a single digit, index of the LED to turn on (1-indexed), possible values: [1-9], eg. `1`, `2`, `9`\n"
            "\t| - starts a new animation frame\n"
            "\n"
-           "In each frame individual diodes can be turned on, state of a diode is not retained between frames. The program has always an implicit `|` at the very beginning which starts your first animation frame. Each animation frame has a fixed duration. If diode instructions repeat in a single frame, the behavior is equivalent as if it was specified only once. Within a single frame order of diodes plays no role.\n"
+           "In each frame individual LEDs can be turned on, state of a LED is not retained between frames. The program has always an implicit `|` at the very beginning which starts your first animation frame. Each animation frame has a fixed duration. If LED instructions repeat in a single frame, the behavior is equivalent as if it was specified only once. Within a single frame order of LEDs plays no role.\n"
            "\n"
            "Example programs:\n"
-           "\t1234||1234 - flashes 4 diodes, turns them off, and turned them back on\n"
-           "\t1|2|3|4    - flashes a single diode per frame\n",
+           "\t1234||1234 - flashes 4 LEDs, turns them off, and turned them back on\n"
+           "\t1|2|3|4    - flashes a single LED per frame\n",
            argv[0]);
 }
 
