@@ -33,7 +33,7 @@ struct gpio_context_t {
     struct gpiod_line_bulk *leds;
 };
 
-char program[PROGRAM_SIZE];
+char program[PROGRAM_SIZE] = {'\0'};
 
 void flush_stdin(void) {
     int c;

@@ -6,7 +6,7 @@ $(NAME): $(OBJS)
 	$(CC) -o $(NAME) $(CFLAGS) $(LDFLAGS) $(OBJS) -l gpiod -Wall -g
 
 $(OBJS) : %.o : %.c
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $< -o $@ -g
 
 format:
 	clang-format -i *.c
