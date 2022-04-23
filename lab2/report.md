@@ -3,7 +3,7 @@ title: Linux for Embedded Systems -- Laboratory ex. 2
 geometry: margin=2.5cm
 author:
   - Marcin Wojnarowski, 303880
-date: 12-04-2022
+date: 20-04-2022
 ---
 
 # Description of the assignment
@@ -92,5 +92,18 @@ Buildroot configuration:
 .
 |-- .config
 |-- setup.sh
-TODO
+\-- mypkg
+  |-- Config.in
+  |-- external.desc
+  |-- external.mk
+  |-- package
+  |   \-- dioed
+  |       |-- Config.in
+  |       \-- dioed.mk
+  \-- src
+      \-- dioed
+          |-- .clang-format
+          |-- build.sh
+          |-- main.c
+          \-- Makefile
 ```
