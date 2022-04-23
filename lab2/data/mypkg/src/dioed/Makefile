@@ -3,7 +3,7 @@ OBJS := main.o
 NAME=dioed
 
 $(NAME): $(OBJS)
-	$(CC) -o $(NAME) $(CFLAGS) $(LDFLAGS) $(OBJS) -l gpiod -Wall
+	$(CC) -o $(NAME) $(CFLAGS) $(LDFLAGS) $(OBJS) -l gpiod -Wall -g
 
 $(OBJS) : %.o : %.c
 	$(CC) -c $(CFLAGS) $< -o $@

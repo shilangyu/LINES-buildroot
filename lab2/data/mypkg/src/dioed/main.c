@@ -13,10 +13,20 @@
 
 #define PROGRAM_SIZE 120
 
-static const char CHIP[] = "gpiochip0";
+static const char CONSUMER[]      = "dioed_consumer";
+static const char CHIP[]          = "gpiochip0";
+static const int BOUNCE_WINDOW_MS = 100;
 
 unsigned int button_lines[] = {25, 10, 17, 18};
 unsigned int led_lines[]    = {24, 22, 23, 27};
+
+static const int NS_PER_S  = 1000000000;
+static const int NS_PER_MS = NS_PER_S / 1000;
+
+int frame_duration = 1000000;
+
+struct timespec last_event = {0, 0};
+int last_event_type        = -1;
 
 struct gpio_context_t {
     struct gpiod_line_bulk *buttons;
@@ -38,6 +48,7 @@ void greet(char **argv) {
            "\t%d) Start programming\n"
            "\t%d) Run saved program\n"
            "\t%d) Change frame duration, cycles between the following values: 1s [default], 500ms, 100ms\n"
+           "\t%d) Exits program\n"
            "\n"
            "The programming language consists of single-char instructions, available instructions:\n"
            "\t# - a single digit, index of the LED to turn on (1-indexed), possible values: [1-9], eg. `1`, `2`, `9`\n"
@@ -51,7 +62,33 @@ void greet(char **argv) {
            argv[0],
            button_lines[0],
            button_lines[1],
-           button_lines[2]);
+           button_lines[2],
+           button_lines[3]);
+}
+
+void reset_leds(struct gpiod_line_bulk *leds) {
+    for (int i = 0; i < leds->num_lines; i++) {
+        int ret = gpiod_line_set_value(leds->lines[i], 0);
+        if (ret) {
+            ERR("gpiod_line_set_value");
+        }
+    }
+}
+
+void change_frame_duration() {
+    switch (frame_duration) {
+    case 1000000:
+        frame_duration = 500000;
+        break;
+    case 500000:
+        frame_duration = 100000;
+        break;
+    case 100000:
+        frame_duration = 1000000;
+        break;
+    }
+
+    printf("Changed frame duration to %dms\n", frame_duration / 1000);
 }
 
 void run_program(struct gpiod_line_bulk *leds) {
@@ -80,21 +117,17 @@ void run_program(struct gpiod_line_bulk *leds) {
             printf("Following LED does not exist: %c\n", program[i]);
             break;
         case '|':
-            sleep(1);
+            usleep(frame_duration);
+            reset_leds(leds);
             break;
         default:
             ERR("Unexpected instruction");
             break;
         }
-
-
-        for (int i = 0; i < leds->num_lines; i++) {
-            int ret = gpiod_line_set_value(leds->lines[i], 0);
-            if (ret) {
-                ERR("gpiod_line_set_value");
-            }
-        }
     }
+
+    usleep(frame_duration);
+    reset_leds(leds);
 }
 
 void read_program(void) {
@@ -159,23 +192,35 @@ static void handle_event(struct gpio_context_t *ctx,
     } else if (line == button_lines[1]) {
         run_program(ctx->leds);
     } else if (line == button_lines[2]) {
-        // TODO: change frame rate
+        change_frame_duration();
+    } else if (line == button_lines[3]) {
+        exit(EXIT_SUCCESS);
     } else {
-        ERR("Unexpected line event");
+        fprintf(stderr, "%s:%d unrecognized gpio line\n", __FILE__, __LINE__);
+        exit(EXIT_FAILURE);
     }
-
-    printf("Something happened %d!\n", line);
 }
 
 static int event_callback(int event_type, unsigned int line,
                           const struct timespec *timestamp, void *data) {
     struct gpio_context_t *ctx = data;
 
-    printf("Got event %d\n", line);
+    long long prev_abs_time = last_event.tv_sec * NS_PER_S + last_event.tv_nsec;
+    long long curr_abs_time = timestamp->tv_sec * NS_PER_S + timestamp->tv_nsec;
+
+    if (last_event_type == event_type || curr_abs_time - prev_abs_time < BOUNCE_WINDOW_MS * NS_PER_MS) {
+        return GPIOD_CTXLESS_EVENT_CB_RET_OK;
+    }
+
+    last_event_type    = event_type;
+    last_event.tv_sec  = timestamp->tv_sec;
+    last_event.tv_nsec = timestamp->tv_nsec;
 
     switch (event_type) {
     case GPIOD_CTXLESS_EVENT_CB_FALLING_EDGE:
         handle_event(ctx, event_type, line, timestamp);
+        break;
+    case GPIOD_CTXLESS_EVENT_CB_RISING_EDGE:
         break;
     default:
         ERR("Unexpected gpio event");
@@ -200,7 +245,6 @@ int main(int argc, char *argv[]) {
         ERR("chip_open_lookup");
     }
 
-    // TODO: segmentation fault here
     ret = gpiod_chip_get_lines(chip, button_lines, 4, &buttons);
     if (ret) {
         ERR("gpiod_chip_get_lines:buttons");
@@ -211,13 +255,12 @@ int main(int argc, char *argv[]) {
         ERR("gpiod_chip_get_lines:butledstons");
     }
 
-    for(int i = 0; i < 4; i++) {
-        ret = gpiod_line_request_output(leds.lines[i], "CONSUMER", 0);
-    if (ret) {
-        ERR("gpiod_chip_get_lines:butledstons");
+    for (int i = 0; i < 4; i++) {
+        ret = gpiod_line_request_output(leds.lines[i], CONSUMER, 0);
+        if (ret) {
+            ERR("gpiod_chip_get_lines:butledstons");
+        }
     }
-    }
-
 
     struct gpio_context_t ctx = {
         .buttons = &buttons,
@@ -226,17 +269,16 @@ int main(int argc, char *argv[]) {
 
     ret = gpiod_ctxless_event_monitor_multiple_ext(
         CHIP,
-        GPIOD_CTXLESS_EVENT_FALLING_EDGE,
+        GPIOD_CTXLESS_EVENT_BOTH_EDGES,
         button_lines,
         4,
         false,
-        "cool_marcin",
+        CONSUMER,
         &timeout,
-        NULL, // TODO: check if this is important
+        NULL,
         event_callback,
         &ctx,
-        0 // TODO: check if the flag should be different
-    );
+        0);
 
     if (ret) {
         ERR("gpiod_ctxless_event_monitor_multiple_ext");
