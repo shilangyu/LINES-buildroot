@@ -20,7 +20,7 @@ def index():
 
 @app.route("/download/<path:file>")
 def download(file: str):
-    return send_file(file)
+    return send_file(f'/{file}')
 
 
 @app.route("/upload", methods=['POST'])
@@ -42,4 +42,4 @@ if __name__ == "__main__":
     root = Path(sys.argv[1])
     root.mkdir(parents=True, exist_ok=True)
 
-    app.run()
+    app.run(host='0.0.0.0')
