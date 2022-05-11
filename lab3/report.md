@@ -24,7 +24,9 @@ date: 08-05-2022
 
 # Procedure to recreate the design from the attached archive
 
-After unpacking the attached archive `wojnarowskim_lab3.tar.gz` there will be a `setup.sh` script. Running it will download buildroot, copy over config files, change the size of the vfat partition, and finally make the images.
+After unpacking the attached archive `wojnarowskim_lab3.tar.gz` there will be a `setup.sh` script. Running it will download buildroot, copy over config files, change the size of the vfat partition, and finally make the images. In this lab, however, many manual work with moving images around, creating partitions etc is required, thus I have failed to automate it. Hopefully the report describes all steps needed.
+
+\newpage
 
 # Description of the solution
 
@@ -75,6 +77,8 @@ mkimage -T script -C none -n 'Start script' -d boot.txt boot.scr
 ```
 
 The generated file (`boot.scr`) was placed in the root of the vfat partition. Our bootloader is now ready and we proceed to enable it by first moving our admin image to `user/Image.admin` and `u-boot.bin` to `user/Image`. Rebooting into the admin system (by holding the button on the RPi) and running `mount` shows that we have not mounted any additional partitions for the admin system and the size of the image is an indicator that indeed we are using initramfs.
+
+\newpage
 
 ## User system
 
