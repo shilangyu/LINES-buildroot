@@ -1,7 +1,5 @@
 #!/bin/sh
 
 if [ "$1" = "start" ]; then
-    mkdir /file-server || true
-    mount /dev/mmcblk0p3 /file-server
-    screen -dmS file_server python3 /opt/file-server/main.py /file-server
+    screen -dmS file_server python3 /opt/file-server/main.py
 fi

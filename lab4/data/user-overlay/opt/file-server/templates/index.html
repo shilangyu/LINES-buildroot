@@ -7,19 +7,18 @@
     <title>Cool site</title>
   </head>
   <body>
-    <h3>Files:</h3>
+    <h3>Activity log:</h3>
     <ul>
-      {% for f in files %}
-      <li><a href="download/{{ f }}">{{ f }}</a></li>
+      {% for l in logs %}
+      <li>{{ l }}</a></li>
       {% endfor %}
     </ul>
-    {% if files|length == 0 %} No files {% endif %}
+    {% if logs|length == 0 %} No logs {% endif %}
 
     <form>
       <input type="text" name="login" id="login" placeholder="login" />
       <input type="password" name="pass" id="pass" placeholder="password" />
-      <input type="file" name="file" id="file" />
-      <input type="submit" value="upload" />
+      <input type="submit" value="clear logs" />
     </form>
 
     <script>
@@ -28,14 +27,9 @@
 
         const login = e.target.querySelector("#login").value;
         const pass = e.target.querySelector("#pass").value;
-        const file = e.target.querySelector("#file");
 
-        var data = new FormData();
-        data.append("file", file.files[0]);
-
-        const res = await fetch("/upload", {
+        const res = await fetch("/clear_logs", {
           method: "POST",
-          body: data,
           headers: { Authorization: `Basic ${btoa(`${login}:${pass}`)}` },
         });
 
