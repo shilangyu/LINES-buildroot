@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cool site</title>
+  </head>
+  <body>
+    <h3>Files:</h3>
+    <ul>
+      {% for f in files %}
+      <li><a href="download/{{ f }}">{{ f }}</a></li>
+      {% endfor %}
+    </ul>
+    {% if files|length == 0 %} No files {% endif %}
+
+    <form>
+      <input type="text" name="login" id="login" placeholder="login" />
+      <input type="password" name="pass" id="pass" placeholder="password" />
+      <input type="file" name="file" id="file" />
+      <input type="submit" value="upload" />
+    </form>
+
+    <script>
+      document.querySelector("form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const login = e.target.querySelector("#login").value;
+        const pass = e.target.querySelector("#pass").value;
+        const file = e.target.querySelector("#file");
+
+        var data = new FormData();
+        data.append("file", file.files[0]);
+
+        const res = await fetch("/upload", {
+          method: "POST",
+          body: data,
+          headers: { Authorization: `Basic ${btoa(`${login}:${pass}`)}` },
+        });
+
+        if (res.ok) {
+          window.location.reload(true);
+        } else if (res.status === 401) {
+          alert("Unauthorized");
+        } else {
+          alert("Bad request");
+        }
+      });
+    </script>
+  </body>
+</html>
