@@ -27,9 +27,9 @@ For this lab the motion detector module was chosen ([link](https://botland.store
 
 1. GND - connected to ground
 2. VCC - connected to 5V (compatible with 3.3V)
-3. OUT - connected to gpio pin, in this case it was connected to lane `21`
+3. OUT - connected to a gpio pin, in this case it was connected to lane `21`
 
-On OUT the signal was sent to the GPIO lane, when HIGH an object was detected. When low, no object is detected.
+On OUT the signal is sent to the GPIO lane, when HIGH an object is detected. When low, no object is detected.
 
 ### Rootfs overlay
 
@@ -57,7 +57,7 @@ It runs a http server with a simple interface showing all of the logs (detected 
 
 > This application uses `python3`, `flask`, and `libgpiod`.
 
-The functionality of this device is the following: A python server is started and listens on the GPIO motion sensor lane (in this case it is the `21` lane). When HIGH is received (motion detected) a note is made and persisted to a log file with a timestamp of the incident. Example: "_DETECTED INTRUDER! timestamp: [123.312]_". Additionally, all LEDs on the board are flashing as long as motion is being detected. Once the signal is LOW again a second note is added: "_INTRUDER LEFT. timestamp: [128.321]_", and all LEDs go back to being off. When the first button is pressed (lane `25`) the system is considered disarmed and will not log any motion detection and a green LED will remain on to indicate that the system is disarmed. Upon pressing the same button, the system becomes armed once again and the green LED turns itself off.
+The functionality of this device is the following: A python server is started and listens on the GPIO motion sensor lane (in this case it is the `21` lane). When HIGH is received (motion detected) a note is made and persisted to a log file with a timestamp of the incident. Example: "_DETECTED INTRUDER! timestamp: [123.312]_". Additionally, all LEDs on the board are flashing as long as motion is being detected. Once the signal is LOW again a second note is added: "_INTRUDER LEFT. timestamp: [128.321]_", and all LEDs go back to being off. When the first button is pressed (lane `25`) the system is considered disarmed and will not log any motion detection and the red LED will remain on to indicate that the system is disarmed. Upon pressing the same button, the system becomes armed once again and the red LED turns itself off.
 
 In the web interface, one can inspect the logs and clear them upon proper authentication.
 
