@@ -53,6 +53,8 @@ It runs a http server with a simple interface showing all of the logs (detected 
 
 ![motion logs interface](motion-logs-interface.png)
 
+To check whether boot script works, we can see that running `screen -r` connects to our session, and visiting the website (port 5000) shows the interface.
+
 ### Application
 
 > This application uses `python3`, `flask`, and `libgpiod`.
